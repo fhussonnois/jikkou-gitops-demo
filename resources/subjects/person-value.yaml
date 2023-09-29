@@ -1,0 +1,15 @@
+---
+apiVersion: "schemaregistry.jikkou.io/v1beta2"
+kind: "SchemaRegistrySubject"
+metadata:
+  name: "person-value"
+  labels: { }
+  annotations:
+    schemaregistry.jikkou.io/normalize-schema: true
+spec:
+  compatibilityLevel: "FULL_TRANSITIVE"
+  schemaType: "AVRO"
+  schema: 
+    # The path must be relative to the root folder of the Github repository.
+    $ref: ./schemas/avro/Person.avsc
+

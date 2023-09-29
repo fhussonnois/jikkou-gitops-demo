@@ -1,0 +1,68 @@
+name: 'Main'
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+env:
+  JIKKOU_VERSION: 'latest'
+jobs:
+  build:
+    name: 'Validate and provision resources'
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout GitHub repository'
+        uses: actions/checkout@v4
+        with:
+          clean: true
+
+      - name: 'Setup Jikkou'
+        uses: streamthoughts/setup-jikkou@v0.2.0
+        with:
+          jikkou_version: ${{ matrix['jikkou-versions'] }}
+          jikkou_config: ./.jikkou/config.json
+
+#      - name: 'Check Aiven Service Health'
+#        run: |
+#          jikkou health get avnservice
+#        env:
+#          AIVEN_KAFKA_PROJECT: ${{ secrets.AIVEN_KAFKA_PROJECT }}
+#          AIVEN_KAFKA_SERVICE: ${{ secrets.AIVEN_KAFKA_SERVICE }}
+#          AIVEN_AUTH_TOKEN: ${{ secrets.AIVEN_AUTH_TOKEN }}
+
+      - name: 'Validate Schemas'
+        id: validate
+        run: |
+          jikkou validate --files ./resources/subjects --file-name '**/*.yaml'
+
+      - name: 'Comment PR (on success)'
+        uses: actions/github-script@v6
+        if: github.event_name == 'pull_request'
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `Validation succeeded! ✅ 
+            
+              **STDOUT**
+              ${{ steps.validate.outputs.stdout }}`
+            })
+
+      - name: 'Comment PR (on failure)'
+        uses: actions/github-script@v6
+        if: failure() && github.event_name == 'pull_request' && steps.validate.outputs.exitcode != '0'
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: 'Validation failed! ❌ 
+            
+              **STDERR**
+              ${{ steps.validate.outputs.stderr }}'
+            })
