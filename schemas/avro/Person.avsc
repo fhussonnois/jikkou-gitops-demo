@@ -1,0 +1,43 @@
+{
+  "namespace": "com.example",
+  "type": "record",
+  "name": "Person",
+  "fields": [
+    {
+      "name": "id",
+      "type": [
+        "null",
+        "int"
+      ],
+      "doc": "The person's unique ID",
+      "default": null
+    },
+    {
+      "name": "firstnameya",
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null,
+      "doc": "The person's legal firstname."
+    },
+    {
+      "name": "lastname",
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null,
+      "doc": " The person's legal lastname."
+    },
+    {
+      "name": "age",
+      "type": [
+        "null",
+        "int"
+      ],
+      "default": null,
+      "doc": "The person's age."
+    }
+  ]
+}

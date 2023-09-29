@@ -1,0 +1,7 @@
+{
+  "currentContext" : "aiven",
+  "aiven" : {
+    "configFile" : "./.jikkou/aiven-kafka-service.conf",
+    "configProps" : {}
+  }
+}
