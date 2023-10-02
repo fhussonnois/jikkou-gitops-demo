@@ -2,6 +2,7 @@
   "namespace": "com.example",
   "type": "record",
   "name": "Person",
+  "doc": "Personal Identifiable Information (PII)",
   "fields": [
     {
       "name": "id",
@@ -13,7 +14,7 @@
       "default": null
     },
     {
-      "name": "firstnameya",
+      "name": "firstname",
       "type": [
         "null",
         "string"

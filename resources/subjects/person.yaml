@@ -2,10 +2,10 @@
 apiVersion: "schemaregistry.jikkou.io/v1beta2"
 kind: "SchemaRegistrySubject"
 metadata:
-  name: "person-value"
+  # The Schema Subject Name
+  name: "Person"
   labels: { }
-  annotations:
-    schemaregistry.jikkou.io/normalize-schema: true
+  annotations: { }
 spec:
   compatibilityLevel: "FULL_TRANSITIVE"
   schemaType: "AVRO"
