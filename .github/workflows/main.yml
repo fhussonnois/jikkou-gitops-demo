@@ -47,7 +47,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               body: `Validation succeeded! ✅ 
-            
+
               **STDOUT**
               ${{ steps.validate.outputs.stdout }}`
             })
@@ -62,7 +62,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               body: 'Validation failed! ❌ 
-            
+
               **STDERR**
               ${{ steps.validate.outputs.stderr }}'
             })
