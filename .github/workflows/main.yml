@@ -6,6 +6,9 @@ on:
       - main
   pull_request:
 
+permissions:
+  pull-requests: 'write'
+
 env:
   JIKKOU_VERSION: 'latest'
 jobs:
@@ -15,8 +18,6 @@ jobs:
     steps:
       - name: 'Checkout GitHub repository'
         uses: actions/checkout@v4
-        with:
-          clean: true
 
       - name: 'Setup Jikkou'
         uses: streamthoughts/setup-jikkou@v0.2.0
@@ -37,10 +38,11 @@ jobs:
         run: |
           jikkou validate --files ./resources/subjects --file-name '**/*.yaml'
 
-      - name: 'Comment PR (on success)'
+      - name: 'Comment PR (Success)'
         uses: actions/github-script@v6
         if: github.event_name == 'pull_request'
         with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             github.rest.issues.createComment({
               issue_number: context.issue.number,
@@ -49,20 +51,27 @@ jobs:
               body: `Validation succeeded! ✅ 
             
               **STDOUT**
-              ${{ steps.validate.outputs.stdout }}`
+              \`\`\`yaml
+              ${{ steps.validate.outputs.stdout }}
+              \`\`\`
+            `
             })
 
-      - name: 'Comment PR (on failure)'
+      - name: 'Comment PR (Failure)'
         uses: actions/github-script@v6
         if: failure() && github.event_name == 'pull_request' && steps.validate.outputs.exitcode != '0'
         with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: 'Validation failed! ❌ 
+              body: `Validation failed! ❌ 
             
               **STDERR**
-              ${{ steps.validate.outputs.stderr }}'
+              \`\`\`
+              ${{ steps.validate.outputs.stderr }}
+              \`\`\`
+            `
             })
