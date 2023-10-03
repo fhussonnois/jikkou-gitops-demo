@@ -11,6 +11,8 @@ permissions:
 
 env:
   JIKKOU_VERSION: 'latest'
+  JIKKOU_CONFIG: './.jikkou/config.json'
+
 jobs:
   build:
     name: 'Validate and provision resources'
@@ -22,21 +24,26 @@ jobs:
       - name: 'Setup Jikkou'
         uses: streamthoughts/setup-jikkou@v0.2.0
         with:
-          jikkou_version: ${{ matrix['jikkou-versions'] }}
-          jikkou_config: ./.jikkou/config.json
+          jikkou_version: ${{ env.JIKKOU_VERSION }}
+          jikkou_config: ${{ env.JIKKOU_CONFIG }}
 
-#      - name: 'Check Aiven Service Health'
-#        run: |
-#          jikkou health get avnservice
-#        env:
-#          AIVEN_KAFKA_PROJECT: ${{ secrets.AIVEN_KAFKA_PROJECT }}
-#          AIVEN_KAFKA_SERVICE: ${{ secrets.AIVEN_KAFKA_SERVICE }}
-#          AIVEN_AUTH_TOKEN: ${{ secrets.AIVEN_AUTH_TOKEN }}
+      - name: 'Check Aiven Service Health'
+        run: |
+          jikkou health get avnservice
+        env:
+          AIVEN_KAFKA_PROJECT: ${{ secrets.AIVEN_KAFKA_PROJECT }}
+          AIVEN_KAFKA_SERVICE: ${{ secrets.AIVEN_KAFKA_SERVICE }}
+          AIVEN_AUTH_TOKEN: ${{ secrets.AIVEN_AUTH_TOKEN }}
 
       - name: 'Validate Schemas'
         id: validate
         run: |
           jikkou validate --files ./resources/subjects --file-name '**/*.yaml'
+        env:
+          SCHEMA_REGISTRY_URL: ${{ secrets.SCHEMA_REGISTRY_URL }}
+          SCHEMA_REGISTRY_AUTH_USER: ${{ secrets.SCHEMA_REGISTRY_AUTH_USER }}
+          SCHEMA_REGISTRY_AUTH_PASSWORD: ${{ secrets.SCHEMA_REGISTRY_AUTH_PASSWORD }}
+
 
       - name: 'Comment PR (Success)'
         uses: actions/github-script@v6
