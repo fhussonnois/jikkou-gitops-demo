@@ -34,7 +34,7 @@ jobs:
       - name: 'Deploy Schemas'
         id: deploy
         run: |
-          jikkou apply --files ./resources/subjects --file-name '**/*.yaml'
+          jikkou update --files ./resources/subjects --file-name '**/*.yaml'
         env:
           SCHEMA_REGISTRY_URL: ${{ secrets.SCHEMA_REGISTRY_URL }}
           SCHEMA_REGISTRY_AUTH_USER: ${{ secrets.SCHEMA_REGISTRY_AUTH_USER }}
